@@ -10,7 +10,7 @@ except Exception as error:
     long_description = None
 
 setup(
-    name='stocky',
+    name='tomaty',
     author='elias julian marko garcia',
     author_email='elias.jm.garcia@gmail.com',
     description=(
