@@ -16,10 +16,10 @@ setup(
     description=(
         'tomaty is a pomodoro program featuring a GUI and tracking system'),
     url='https://github.com/ejmg/tomaty',
-    version='0.0.1dev',
+    version='0.0.11dev',
     packages=find_packages(),
     entry_points={
-        "console_scripts": ['tomaty = tomaty.tomaty:cli'],
+        "console_scripts": ['tomaty = tomaty.tomaty:tomaty'],
     },
     install_requires=[],
     license='MIT',

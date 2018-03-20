@@ -20,7 +20,7 @@ BREAK_MINUTES = 5
 
 
 class Tomaty(Gtk.Window):
-    def __init__(self, args):
+    def __init__(self):
         """init for main class Tomaty, runs tomaty app"""
 
         super(Tomaty, self).__init__(title="tomaty :: focus!")
@@ -52,8 +52,12 @@ class Tomaty(Gtk.Window):
         return self.time
 
 
-def main():
+def tomaty():
     t = Tomaty()
     t.connect('delete-event', Gtk.main_quit)
     t.show_all()
     Gtk.main()
+
+
+if __name__ == '__main__':
+    tomaty()
