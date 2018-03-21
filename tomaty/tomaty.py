@@ -32,7 +32,7 @@ class Tomaty(Gtk.Window):
         self.add(self.hbox)
 
         # make the label with timer
-        self.timer_label = Gtk.Label("{}".format(self.time))
+        self.timer_label = Gtk.Label(label="{}".format(self.time))
 
         # add into hbox
         self.hbox.pack_start(self.timer_label, True, True, 0)
@@ -41,7 +41,7 @@ class Tomaty(Gtk.Window):
         GLib.timeout_add_seconds(1, self.count_down)
 
     def count_down(self):
-        self.timer_label.set_text("{}".format(self.tick_tock()))
+        self.timer_label.set_text(str="{}".format(self.tick_tock()))
 
         # signal to main loop to continue
         return GLib.SOURCE_CONTINUE
@@ -52,12 +52,8 @@ class Tomaty(Gtk.Window):
         return self.time
 
 
-def tomaty():
+def run():
     t = Tomaty()
     t.connect('delete-event', Gtk.main_quit)
     t.show_all()
     Gtk.main()
-
-
-if __name__ == '__main__':
-    tomaty()
