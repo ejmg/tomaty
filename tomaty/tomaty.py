@@ -11,6 +11,7 @@ TODO: everything
 :author: elias julian marko garcia
 :license: MIT, see LICENSE
 """
+import inspect
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GObject, GLib
@@ -28,16 +29,23 @@ class Tomaty(Gtk.Window):
         self.time = 60 * POMO_MINUTES
 
         # setup main box for labels
-        self.hbox = Gtk.Box(spacing=10)
-        self.add(self.hbox)
+        self.vbox = Gtk.VBox(spacing=10)
+        self.add(self.vbox)
 
         # make the label with timer
         self.timer_label = Gtk.Label(label="{}".format(self.time))
 
         # add into hbox
-        self.hbox.pack_start(self.timer_label, True, True, 0)
+        self.vbox.pack_start(self.timer_label, True, True, 0)
 
+        button = Gtk.Button.new_with_label(label="start")
+        button.connect("clicked", self.click_start)
+
+        self.vbox.pack_start(button, True, True, 0)
+
+    def click_start(self, button):
         # begin counting!
+
         GLib.timeout_add_seconds(1, self.count_down)
 
     def count_down(self):
