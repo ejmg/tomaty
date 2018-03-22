@@ -16,7 +16,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GObject, GLib
 
-POMO_MINUTES = 25
+POMO_MINUTES = 1
 BREAK_MINUTES = 5
 
 
@@ -26,7 +26,8 @@ class Tomaty(Gtk.Window):
 
         super(Tomaty, self).__init__(title="tomaty :: focus!")
         self.set_border_width(100)
-        self.time = 60 * POMO_MINUTES
+        self.time = 10
+        self.running = False
 
         # setup main box for labels
         self.vbox = Gtk.VBox(spacing=10)
@@ -45,18 +46,23 @@ class Tomaty(Gtk.Window):
 
     def click_start(self, button):
         # begin counting!
-
-        GLib.timeout_add_seconds(1, self.count_down)
+        if self.running is False:
+            self.running = True
+            GLib.timeout_add_seconds(1, self.count_down)
 
     def count_down(self):
         self.timer_label.set_text(str="{}".format(self.tick_tock()))
 
         # signal to main loop to continue
+        if self.time <= 0:
+            return GLib.SOURCE_REMOVE
+
         return GLib.SOURCE_CONTINUE
 
     def tick_tock(self):
         self.time = self.time - 1
-
+        if self.time == 0:
+            self.running = False
         return self.time
 
 
