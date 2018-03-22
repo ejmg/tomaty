@@ -27,8 +27,10 @@ class Tomaty(Gtk.Window):
         super(Tomaty, self).__init__(title="tomaty :: focus!")
         self.set_border_width(100)
         self.pomo_time = 10
+        self.break_time = 5
         self.rem_time = self.pomo_time
         self.running = False
+        self.break_period = False
 
         # setup main box for labels
         self.vbox = Gtk.VBox(spacing=10)
@@ -49,21 +51,32 @@ class Tomaty(Gtk.Window):
         # begin counting!
         if self.running is False:
             self.running = True
-            GLib.timeout_add_seconds(1, self.count_down)
+            if self.break_period is False:
+                self.rem_time = self.pomo_time
+                GLib.timeout_add_seconds(1, self.countDown)
+            else:
+                self.rem_time = self.break_time
+                GLib.timeout_add_seconds(1, self.countDown)
 
-    def count_down(self):
-        # check to make sure countdown is not done
+    def countDown(self):
+        # check to make sure countdown is not done if it is done, then we need
+        # to reset a lot of things before going forward
         if self.rem_time == 0:
-            self.timer_label.set_text(str="Pomodoro Done!")
-            self.rem_time = self.pomo_time
             self.running = False
+            if self.break_period is False:
+                self.timer_label.set_text(str="Pomodoro Done!\nStart Break?")
+                self.break_period = True
+            else:
+                self.timer_label.set_text(str="Break Over!\n Start Pomodoro?")
+                self.break_period = False
+
             return GLib.SOURCE_REMOVE
 
-        self.timer_label.set_text(str="{}".format(self.tick_tock()))
+        self.timer_label.set_text(str="{}".format(self.tickTock()))
         # signal to continue countdown within main loop
         return GLib.SOURCE_CONTINUE
 
-    def tick_tock(self):
+    def tickTock(self):
         self.rem_time = self.rem_time - 1
 
         return self.rem_time
