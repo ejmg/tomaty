@@ -19,13 +19,25 @@ from gi.repository import Gtk, GObject, GLib
 POMO_MINUTES = 1
 BREAK_MINUTES = 5
 
+TIMER_FRMT = """
+<span font='46'>{}</span>
+"""
+
+POMO_MSG = """
+<span font='20'>Pomodoro Done!\nStart Break?</span>"""
+
+BREAK_MSG = """
+<span font='20'>Break Over!\nStart Pomodoro?</span>
+"""
+
 
 class Tomaty(Gtk.Window):
     def __init__(self):
         """init for main class Tomaty, runs tomaty app"""
 
         super(Tomaty, self).__init__(title="tomaty :: focus!")
-        self.set_border_width(100)
+        self.set_border_width(50)
+
         self.pomo_time = 10
         self.break_time = 5
         self.rem_time = self.pomo_time
@@ -37,7 +49,13 @@ class Tomaty(Gtk.Window):
         self.add(self.vbox)
 
         # make the label with timer
-        self.timer_label = Gtk.Label(label="{}".format(self.rem_time))
+        self.timer_label = Gtk.Label()
+        self.timer_label.set_markup(TIMER_FRMT.format(self.rem_time))
+
+        # set text, not label, to center align.
+        self.timer_label.set_justify(2)
+
+        print(str(dir(self.timer_label)))
 
         # add into hbox
         self.vbox.pack_start(self.timer_label, True, True, 0)
@@ -64,15 +82,15 @@ class Tomaty(Gtk.Window):
         if self.rem_time == 0:
             self.running = False
             if self.break_period is False:
-                self.timer_label.set_text(str="Pomodoro Done!\nStart Break?")
+                self.timer_label.set_markup(str=POMO_MSG)
                 self.break_period = True
             else:
-                self.timer_label.set_text(str="Break Over!\n Start Pomodoro?")
+                self.timer_label.set_markup(str=BREAK_MSG)
                 self.break_period = False
 
             return GLib.SOURCE_REMOVE
 
-        self.timer_label.set_text(str="{}".format(self.tickTock()))
+        self.timer_label.set_markup(str=TIMER_FRMT.format(self.tickTock()))
         # signal to continue countdown within main loop
         return GLib.SOURCE_CONTINUE
 
