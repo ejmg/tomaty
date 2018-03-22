@@ -52,35 +52,28 @@ class Tomaty(Gtk.Window):
         if self.running is False:
             self.running = True
             if self.break_period is False:
+                self.rem_time = self.pomo_time
                 GLib.timeout_add_seconds(1, self.countDown)
             else:
-                GLib.timeout_add_seconds(1, self.breakCountDown)
+                self.rem_time = self.break_time
+                GLib.timeout_add_seconds(1, self.countDown)
 
     def countDown(self):
         # check to make sure countdown is not done if it is done, then we need
         # to reset a lot of things before going forward
         if self.rem_time == 0:
-            self.timer_label.set_text(str="Pomodoro Done!\nStart Break?")
             self.running = False
-            self.break_period = True
-            self.rem_time = self.break_time
+            if self.break_period is False:
+                self.timer_label.set_text(str="Pomodoro Done!\nStart Break?")
+                self.break_period = True
+            else:
+                self.timer_label.set_text(str="Break Over!\n Start Pomodoro?")
+                self.break_period = False
+
             return GLib.SOURCE_REMOVE
 
         self.timer_label.set_text(str="{}".format(self.tickTock()))
         # signal to continue countdown within main loop
-        return GLib.SOURCE_CONTINUE
-
-    def breakCountDown(self):
-        """countdown timer for a break"""
-
-        if self.rem_time == 0:
-            self.timer_label.set_text(str="Break Over!\n Start Pomodoro?")
-            self.running = False
-            self.break_period = False
-            self.rem_time = self.pomo_time
-            return GLib.SOURCE_REMOVE
-
-        self.timer_label.set_text(str="{}".format(self.tickTock()))
         return GLib.SOURCE_CONTINUE
 
     def tickTock(self):
