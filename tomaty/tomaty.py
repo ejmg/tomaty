@@ -28,8 +28,13 @@ POMO_MSG = """
 <span font='20'>Pomodoro Done!\nStart Break?</span>"""
 
 BREAK_MSG = """
-<span font='20'>Break Over!\nStart Pomodoro?</span>
-"""
+<span font='20'>Break Over!\nStart Pomodoro?</span>"""
+
+POMO_RESTART_MSG = """
+<span font='20'>Start Pomodoro?</span>"""
+
+BREAK_RESTART_MSG = """
+<span font='20'>Start Break?</span>"""
 
 
 class Tomaty(Gtk.Window):
@@ -62,27 +67,40 @@ class Tomaty(Gtk.Window):
         # add into hbox
         self.vbox.pack_start(self.timer_label, True, True, 0)
 
-        button = Gtk.Button.new_with_label(label="start")
-        button.connect("clicked", self.click_start)
+        self.button = Gtk.Button.new_with_label(label="start")
+        self.button.connect("clicked", self.click_start)
 
-        self.vbox.pack_start(button, True, True, 0)
+        self.vbox.pack_start(self.button, True, True, 0)
 
     def click_start(self, button):
         # begin counting!
         if self.running is False:
             self.running = True
+            self.button.set_label("restart")
             if self.break_period is False:
                 self.rem_time = self.pomo_time
                 GLib.timeout_add_seconds(1, self.countDown)
             else:
                 self.rem_time = self.break_time
                 GLib.timeout_add_seconds(1, self.countDown)
+        else:
+            self.running = False
+            self.button.set_label("start")
+            if self.break_period is False:
+                self.timer_label.set_markup(str=POMO_RESTART_MSG)
+                self.rem_time = self.pomo_time
+                GLib.SOURCE_REMOVE
+            else:
+                self.timer_label.set_markup(str=BREAK_RESTART_MSG)
+                self.rem_time = self.break_time
+                GLib.SOURCE_REMOVE
 
     def countDown(self):
         # check to make sure countdown is not done if it is done, then we need
         # to reset a lot of things before going forward
         if self.rem_time == timedelta(seconds=0):
             self.running = False
+            self.button.set_label("start")
             if self.break_period is False:
                 self.timer_label.set_markup(str=POMO_MSG)
                 self.break_period = True
@@ -90,6 +108,9 @@ class Tomaty(Gtk.Window):
                 self.timer_label.set_markup(str=BREAK_MSG)
                 self.break_period = False
 
+            return GLib.SOURCE_REMOVE
+
+        if self.running is False:
             return GLib.SOURCE_REMOVE
 
         self.timer_label.set_markup(str=TIMER_FRMT.format(self.tickTock()))
