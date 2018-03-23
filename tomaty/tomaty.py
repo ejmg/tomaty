@@ -15,8 +15,9 @@ import inspect
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GObject, GLib
+from datetime import timedelta
 
-POMO_MINUTES = 1
+POMO_MINUTES = 10
 BREAK_MINUTES = 5
 
 TIMER_FRMT = """
@@ -38,8 +39,9 @@ class Tomaty(Gtk.Window):
         super(Tomaty, self).__init__(title="tomaty :: focus!")
         self.set_border_width(50)
 
-        self.pomo_time = 10
-        self.break_time = 5
+        # TODO: properly convert to minutes when no longer dev'ing
+        self.pomo_time = timedelta(seconds=POMO_MINUTES)
+        self.break_time = timedelta(seconds=BREAK_MINUTES)
         self.rem_time = self.pomo_time
         self.running = False
         self.break_period = False
@@ -50,7 +52,7 @@ class Tomaty(Gtk.Window):
 
         # make the label with timer
         self.timer_label = Gtk.Label()
-        self.timer_label.set_markup(TIMER_FRMT.format(self.rem_time))
+        self.timer_label.set_markup(TIMER_FRMT.format(str(self.rem_time)[2:]))
 
         # set text, not label, to center align.
         self.timer_label.set_justify(2)
@@ -79,7 +81,7 @@ class Tomaty(Gtk.Window):
     def countDown(self):
         # check to make sure countdown is not done if it is done, then we need
         # to reset a lot of things before going forward
-        if self.rem_time == 0:
+        if self.rem_time == timedelta(seconds=0):
             self.running = False
             if self.break_period is False:
                 self.timer_label.set_markup(str=POMO_MSG)
@@ -95,9 +97,10 @@ class Tomaty(Gtk.Window):
         return GLib.SOURCE_CONTINUE
 
     def tickTock(self):
-        self.rem_time = self.rem_time - 1
+        # TODO: change to minutes format when done dev'ing
+        self.rem_time = self.rem_time - timedelta(seconds=1)
 
-        return self.rem_time
+        return str(self.rem_time)[2:]
 
 
 def run():
