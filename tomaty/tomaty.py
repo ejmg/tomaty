@@ -110,6 +110,9 @@ class Tomaty(Gtk.Window):
 
             return GLib.SOURCE_REMOVE
 
+        if self.running is False:
+            return GLib.SOURCE_REMOVE
+
         self.timer_label.set_markup(str=TIMER_FRMT.format(self.tickTock()))
         # signal to continue countdown within main loop
         return GLib.SOURCE_CONTINUE
