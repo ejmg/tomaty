@@ -47,6 +47,11 @@ class Tomaty(Gtk.Window):
         self.set_resizable(False)
         self.set_size_request(250, 135)
 
+        self.notebook = Gtk.Notebook()
+        self.notebook.set_size_request(250, 150)
+
+        self.add(self.notebook)
+
         # TODO: properly convert to minutes when no longer dev'ing
         self.pomo_time = timedelta(seconds=POMO_MINUTES)
         self.break_time = timedelta(seconds=BREAK_MINUTES)
@@ -56,7 +61,6 @@ class Tomaty(Gtk.Window):
 
         # setup main box for labels
         self.vbox = Gtk.VBox(spacing=0)
-        self.add(self.vbox)
         self.vbox.set_homogeneous(False)
 
         # make the label with timer
@@ -78,6 +82,9 @@ class Tomaty(Gtk.Window):
         self.button.set_halign(Gtk.Align.CENTER)
 
         self.vbox.pack_start(self.button, False, False, 0)
+
+        self.notebook.append_page(
+            child=self.vbox, tab_label=Gtk.Label(label='tomatoro'))
 
     def click_start(self, button):
         # begin counting!
