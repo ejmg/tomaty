@@ -86,6 +86,12 @@ class Tomaty(Gtk.Window):
         self.notebook.append_page(
             child=self.vbox, tab_label=Gtk.Label(label='tomatoro'))
 
+        self.dummyBox = Gtk.VBox(spacing=0)
+        self.dummyBox.add(Gtk.Label(label="WuTang"))
+
+        self.notebook.append_page(
+            child=self.dummyBox, tab_label=Gtk.Label(label="SHOALIN"))
+
     def click_start(self, button):
         # begin counting!
         if self.running is False:
