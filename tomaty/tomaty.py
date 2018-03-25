@@ -14,27 +14,27 @@ TODO: everything
 import inspect
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GObject, GLib
+from gi.repository import Gtk, GObject, GLib, Gdk
 from datetime import timedelta
 
 POMO_MINUTES = 10
 BREAK_MINUTES = 5
 
 TIMER_FRMT = """
-<span font='46'>{}</span>
+<span font='34'>{}</span>
 """
 
 POMO_MSG = """
-<span font='20'>Pomodoro Done!\nStart Break?</span>"""
+<span font='16'>Pomodoro Done!\nStart Break?</span>"""
 
 BREAK_MSG = """
-<span font='20'>Break Over!\nStart Pomodoro?</span>"""
+<span font='16'>Break Over!\nStart Pomodoro?</span>"""
 
 POMO_RESTART_MSG = """
-<span font='20'>Start Pomodoro?</span>"""
+<span font='16'>Start Pomodoro?</span>"""
 
 BREAK_RESTART_MSG = """
-<span font='20'>Start Break?</span>"""
+<span font='16'>Start Break?</span>"""
 
 
 class Tomaty(Gtk.Window):
@@ -42,7 +42,10 @@ class Tomaty(Gtk.Window):
         """init for main class Tomaty, runs tomaty app"""
 
         super(Tomaty, self).__init__(title="tomaty :: focus!")
-        self.set_border_width(50)
+        self.set_border_width(5)
+        self.set_default_size(250, 135)
+        self.set_resizable(False)
+        self.set_size_request(250, 135)
 
         # TODO: properly convert to minutes when no longer dev'ing
         self.pomo_time = timedelta(seconds=POMO_MINUTES)
@@ -52,25 +55,29 @@ class Tomaty(Gtk.Window):
         self.break_period = False
 
         # setup main box for labels
-        self.vbox = Gtk.VBox(spacing=10)
+        self.vbox = Gtk.VBox(spacing=0)
         self.add(self.vbox)
+        self.vbox.set_homogeneous(False)
 
         # make the label with timer
         self.timer_label = Gtk.Label()
         self.timer_label.set_markup(TIMER_FRMT.format(str(self.rem_time)[2:]))
-
         # set text, not label, to center align.
         self.timer_label.set_justify(2)
-
-        print(str(dir(self.timer_label)))
+        self.timer_label.set_margin_top(0)
+        self.timer_label.set_margin_bottom(0)
 
         # add into hbox
         self.vbox.pack_start(self.timer_label, True, True, 0)
 
         self.button = Gtk.Button.new_with_label(label="start")
         self.button.connect("clicked", self.click_start)
+        # self.button.set_border_width(50)
+        self.button.set_margin_top(5)
+        self.button.set_margin_bottom(5)
+        self.button.set_halign(Gtk.Align.CENTER)
 
-        self.vbox.pack_start(self.button, True, True, 0)
+        self.vbox.pack_start(self.button, False, False, 0)
 
     def click_start(self, button):
         # begin counting!
