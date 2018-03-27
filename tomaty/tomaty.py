@@ -11,11 +11,13 @@ TODO: everything
 :author: elias julian marko garcia
 :license: MIT, see LICENSE
 """
-import inspect
+
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GObject, GLib, Gdk
 from datetime import timedelta
+from simpleaudio import WaveObject
+from os import path
 
 POMO_MINUTES = 10
 BREAK_MINUTES = 5
@@ -129,6 +131,7 @@ class Tomaty(Gtk.Window):
         # check to make sure countdown is not done if it is done, then we need
         # to reset a lot of things before going forward
         if self.rem_time == timedelta(seconds=0):
+            alarm()
             self.running = False
             self.button.set_label("start")
             if self.break_period is False:
@@ -155,6 +158,12 @@ class Tomaty(Gtk.Window):
         self.rem_time = self.rem_time - timedelta(seconds=1)
 
         return str(self.rem_time)[2:]
+
+
+def alarm():
+    wavFile = path.abspath('./resources/audio/') + path.sep + 'alarm.wav'
+    wav_obj = WaveObject.from_wave_file(str(wavFile))
+    wav_obj.play()
 
 
 def run():
