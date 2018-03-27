@@ -36,6 +36,9 @@ POMO_RESTART_MSG = """
 BREAK_RESTART_MSG = """
 <span font='16'>Start Break?</span>"""
 
+COUNT = """
+<span font='14'>Tomatoros\nCompleted:\n{}</span>"""
+
 
 class Tomaty(Gtk.Window):
     def __init__(self):
@@ -46,6 +49,7 @@ class Tomaty(Gtk.Window):
         self.set_default_size(250, 135)
         self.set_resizable(False)
         self.set_size_request(250, 135)
+        self.tomatosCompleted = 0
 
         self.notebook = Gtk.Notebook()
         self.notebook.set_size_request(250, 150)
@@ -86,11 +90,17 @@ class Tomaty(Gtk.Window):
         self.notebook.append_page(
             child=self.vbox, tab_label=Gtk.Label(label='tomatoro'))
 
-        self.dummyBox = Gtk.VBox(spacing=0)
-        self.dummyBox.add(Gtk.Label(label="WuTang"))
+        self.tomatoroBox = Gtk.VBox(spacing=0)
+        self.tomatoroLabel = Gtk.Label()
+
+        self.tomatoroLabel.set_markup(str=COUNT.format(self.tomatosCompleted))
+        self.tomatoroLabel.set_justify(2)
+        self.tomatoroLabel.set_margin_left(10)
+        self.tomatoroLabel.set_margin_right(10)
+        self.tomatoroBox.add(self.tomatoroLabel)
 
         self.notebook.append_page(
-            child=self.dummyBox, tab_label=Gtk.Label(label="SHOALIN"))
+            child=self.tomatoroBox, tab_label=Gtk.Label(label="stats"))
 
     def click_start(self, button):
         # begin counting!
@@ -122,6 +132,9 @@ class Tomaty(Gtk.Window):
             self.running = False
             self.button.set_label("start")
             if self.break_period is False:
+                self.tomatosCompleted += 1
+                self.tomatoroLabel.set_markup(
+                    str=COUNT.format(self.tomatosCompleted))
                 self.timer_label.set_markup(str=POMO_MSG)
                 self.break_period = True
             else:
