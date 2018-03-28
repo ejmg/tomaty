@@ -19,7 +19,7 @@ from datetime import timedelta
 from simpleaudio import WaveObject
 from os import path
 from tomaty.tomaty_notebook import TomatyNotebook, TomatyPage
-from tomaty.tomaty_label import TomatyLabel
+from tomaty.tomaty_label import TimerLabel, StatsLabel
 from tomaty.tomaty_button import TomatyButton
 TOMA_MINUTES = 10
 BREAK_MINUTES = 5
@@ -41,7 +41,7 @@ BREAK_RESTART_MSG = """
 <span font='16'>Start Break?</span>"""
 
 COUNT = """
-<span font='14'>Tomatoros\nCompleted:\n{}</span>"""
+<span font='11'><tt>Tomatoros Completed: {}</tt></span>"""
 
 
 class Tomaty(Gtk.Window):
@@ -49,8 +49,9 @@ class Tomaty(Gtk.Window):
         """init for main class Tomaty, runs tomaty app"""
 
         super(Tomaty, self).__init__(title="tomaty :: focus!")
+
+        # attributes
         self.set_border_width(5)
-        self.set_size_request(250, 150)
         self.set_resizable(False)
         self.tomatosCompleted = 0
         self.running = False
@@ -59,40 +60,32 @@ class Tomaty(Gtk.Window):
         self.break_time = timedelta(seconds=BREAK_MINUTES)
         self.rem_time = self.toma_time
 
+        # create notebook, add as main and sole child widget of window
         self.notebook = TomatyNotebook()
-
         self.add(self.notebook)
 
         # TODO: properly convert to minutes when no longer dev'ing
 
-        # setup main box for labels
+        # timer page setup
         self.timerPage = TomatyPage()
-
-        # make the label with timer
-        self.timer_label = TomatyLabel(
+        self.timerLabel = TimerLabel(
             label=TIMER_FRMT.format(str(self.rem_time)[2:]))
+        self.timerPage.pack_start(self.timerLabel, True, True, 0)
 
-        # add into hbox
-        self.timerPage.pack_start(self.timer_label, True, True, 0)
-
+        # start button
         self.tomatyButton = TomatyButton(tmargin=5, bmargin=5)
         self.tomatyButton.connect("clicked", self.click_start)
-
         self.timerPage.pack_start(self.tomatyButton, False, False, 0)
-
         self.notebook.append_page(
             child=self.timerPage, tab_label=Gtk.Label(label='tomatoro'))
 
-        self.tomatoroBox = TomatyPage()
-
-        # stats label
-        self.tomatoroLabel = TomatyLabel(
+        # statistics page setup
+        self.statsPage = TomatyPage()
+        self.statsLabel = StatsLabel(
             label=COUNT.format(self.tomatosCompleted), smargin=10, emargin=10)
-
-        self.tomatoroBox.add(self.tomatoroLabel)
-
+        self.statsPage.pack_start(self.statsLabel, False, False, 0)
         self.notebook.append_page(
-            child=self.tomatoroBox, tab_label=Gtk.Label(label="stats"))
+            child=self.statsPage, tab_label=Gtk.Label(label="stats"))
 
     def click_start(self, tomatyButton):
         # begin counting!
@@ -109,11 +102,11 @@ class Tomaty(Gtk.Window):
             self.running = False
             self.tomatyButton.updateButton()
             if self.break_period is False:
-                self.timer_label.set_markup(str=TOMA_RESTART_MSG)
+                self.timerLabel.set_markup(str=TOMA_RESTART_MSG)
                 self.rem_time = self.toma_time
                 GLib.SOURCE_REMOVE
             else:
-                self.timer_label.set_markup(str=BREAK_RESTART_MSG)
+                self.timerLabel.set_markup(str=BREAK_RESTART_MSG)
                 self.rem_time = self.break_time
                 GLib.SOURCE_REMOVE
 
@@ -126,12 +119,12 @@ class Tomaty(Gtk.Window):
             self.tomatyButton.updateButton()
             if self.break_period is False:
                 self.tomatosCompleted += 1
-                self.tomatoroLabel.set_markup(
+                self.statsLabel.set_markup(
                     str=COUNT.format(self.tomatosCompleted))
-                self.timer_label.set_markup(str=TOMA_MSG)
+                self.timerLabel.set_markup(str=TOMA_MSG)
                 self.break_period = True
             else:
-                self.timer_label.set_markup(str=BREAK_MSG)
+                self.timerLabel.set_markup(str=BREAK_MSG)
                 self.break_period = False
 
             return GLib.SOURCE_REMOVE
@@ -139,7 +132,7 @@ class Tomaty(Gtk.Window):
         if self.running is False:
             return GLib.SOURCE_REMOVE
 
-        self.timer_label.set_markup(str=TIMER_FRMT.format(self.tickTock()))
+        self.timerLabel.set_markup(str=TIMER_FRMT.format(self.tickTock()))
         # signal to continue countdown within main loop
         return GLib.SOURCE_CONTINUE
 

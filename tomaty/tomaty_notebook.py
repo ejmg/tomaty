@@ -17,6 +17,7 @@ from gi.repository import Gtk, GObject, GLib, Gdk
 class TomatyNotebook(Gtk.Notebook):
     def __init__(self, width=0, height=0):
         super(TomatyNotebook, self).__init__()
+        self.set_size_request(250, 150)
 
 
 class TomatyPage(Gtk.VBox):
