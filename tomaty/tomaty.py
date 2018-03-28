@@ -50,7 +50,7 @@ class Tomaty(Gtk.Window):
 
         super(Tomaty, self).__init__(title="tomaty :: focus!")
         self.set_border_width(5)
-        self.set_default_size(250, 150)
+        self.set_size_request(250, 150)
         self.set_resizable(False)
         self.tomatosCompleted = 0
         self.running = False
@@ -59,7 +59,7 @@ class Tomaty(Gtk.Window):
         self.break_time = timedelta(seconds=BREAK_MINUTES)
         self.rem_time = self.toma_time
 
-        self.notebook = TomatyNotebook(250, 150)
+        self.notebook = TomatyNotebook()
 
         self.add(self.notebook)
 
@@ -75,7 +75,7 @@ class Tomaty(Gtk.Window):
         # add into hbox
         self.timerPage.pack_start(self.timer_label, True, True, 0)
 
-        self.tomatyButton = TomatyButton(label="start", tmargin=5, bmargin=5)
+        self.tomatyButton = TomatyButton(tmargin=5, bmargin=5)
         self.tomatyButton.connect("clicked", self.click_start)
 
         self.timerPage.pack_start(self.tomatyButton, False, False, 0)
@@ -98,7 +98,7 @@ class Tomaty(Gtk.Window):
         # begin counting!
         if self.running is False:
             self.running = True
-            self.tomatyButton.set_label("restart")
+            self.tomatyButton.updateButton()
             if self.break_period is False:
                 self.rem_time = self.toma_time
                 GLib.timeout_add_seconds(1, self.countDown)
@@ -107,7 +107,7 @@ class Tomaty(Gtk.Window):
                 GLib.timeout_add_seconds(1, self.countDown)
         else:
             self.running = False
-            self.tomatyButton.set_label("start")
+            self.tomatyButton.updateButton()
             if self.break_period is False:
                 self.timer_label.set_markup(str=TOMA_RESTART_MSG)
                 self.rem_time = self.toma_time
@@ -123,7 +123,7 @@ class Tomaty(Gtk.Window):
         if self.rem_time == timedelta(seconds=0):
             alarm()
             self.running = False
-            self.tomatyButton.set_label("start")
+            self.tomatyButton.updateButton()
             if self.break_period is False:
                 self.tomatosCompleted += 1
                 self.tomatoroLabel.set_markup(

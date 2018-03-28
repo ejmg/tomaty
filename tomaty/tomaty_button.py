@@ -16,16 +16,21 @@ from gi.repository import Gtk, GObject, GLib, Gdk
 
 class TomatyButton(Gtk.Button):
     def __init__(self,
-                 label="",
                  smargin=0,
                  emargin=0,
                  tmargin=0,
                  bmargin=0,
                  halign=Gtk.Align.CENTER):
         super(TomatyButton, self).__init__()
-        self.set_label(label)
+        self.set_label("start")
         self.set_margin_start(smargin)
         self.set_margin_end(emargin)
         self.set_margin_top(tmargin)
         self.set_margin_bottom(bmargin)
         self.set_halign(halign)
+
+    def updateButton(self):
+        if self.get_label() == "start":
+            self.set_label("restart")
+        else:
+            self.set_label("start")

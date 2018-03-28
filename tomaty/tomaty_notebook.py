@@ -18,8 +18,6 @@ class TomatyNotebook(Gtk.Notebook):
     def __init__(self, width=0, height=0):
         super(TomatyNotebook, self).__init__()
 
-        self.set_size_request(width, height)
-
 
 class TomatyPage(Gtk.VBox):
     def __init__(self, spacing=0, homogeneous=False):

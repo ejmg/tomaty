@@ -17,6 +17,9 @@ class TomatyLabel(Gtk.Label):
     """the label object inherents from Gtk.Label and reflects the status
         of the users' tomatoro progression. """
 
+    TOMA_RESTART_MSG = """
+<span font='16'>Start Tomatoro?</span>"""
+
     def __init__(self,
                  label="",
                  smargin=0,
@@ -33,3 +36,7 @@ class TomatyLabel(Gtk.Label):
         self.set_margin_top(tmargin)
         self.set_margin_bottom(bmargin)
         self.set_justify(justify)
+
+    def interrupt(self, ):
+        # if self.get_label() == TOMA_RESTART_MSG:
+        pass
