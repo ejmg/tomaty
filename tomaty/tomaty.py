@@ -19,6 +19,7 @@ from datetime import timedelta
 from simpleaudio import WaveObject
 from os import path
 from tomaty.tomaty_notebook import TomatyNotebook, TomatyPage
+from tomaty.tomaty_label import TomatyLabel
 
 TOMO_MINUTES = 10
 BREAK_MINUTES = 5
@@ -49,9 +50,8 @@ class Tomaty(Gtk.Window):
 
         super(Tomaty, self).__init__(title="tomaty :: focus!")
         self.set_border_width(5)
-        self.set_default_size(250, 135)
+        self.set_default_size(250, 150)
         self.set_resizable(False)
-        self.set_size_request(250, 135)
         self.tomatosCompleted = 0
 
         self.notebook = TomatyNotebook()
@@ -69,6 +69,7 @@ class Tomaty(Gtk.Window):
         self.timerPage = TomatyPage()
 
         # make the label with timer
+        self.timer_label = TomatyLabel
         self.timer_label = Gtk.Label()
         self.timer_label.set_markup(TIMER_FRMT.format(str(self.rem_time)[2:]))
         # set text, not label, to center align.
@@ -91,13 +92,12 @@ class Tomaty(Gtk.Window):
         self.notebook.append_page(
             child=self.timerPage, tab_label=Gtk.Label(label='tomatoro'))
 
-        self.tomatoroBox = Gtk.VBox(spacing=0)
-        self.tomatoroLabel = Gtk.Label()
+        self.tomatoroBox = TomatyPage()
 
-        self.tomatoroLabel.set_markup(str=COUNT.format(self.tomatosCompleted))
-        self.tomatoroLabel.set_justify(2)
-        self.tomatoroLabel.set_margin_left(10)
-        self.tomatoroLabel.set_margin_right(10)
+        # stats label
+        self.tomatoroLabel = TomatyLabel(
+            label=COUNT.format(self.tomatosCompleted), smargin=10, emargin=10)
+
         self.tomatoroBox.add(self.tomatoroLabel)
 
         self.notebook.append_page(
