@@ -18,22 +18,23 @@ from gi.repository import Gtk, GObject, GLib, Gdk
 from datetime import timedelta
 from simpleaudio import WaveObject
 from os import path
+from tomaty.tomaty_notebook import TomatyNotebook, TomatyPage
 
-POMO_MINUTES = 10
+TOMO_MINUTES = 10
 BREAK_MINUTES = 5
 
 TIMER_FRMT = """
 <span font='34'>{}</span>
 """
 
-POMO_MSG = """
-<span font='16'>Pomodoro Done!\nStart Break?</span>"""
+TOMO_MSG = """
+<span font='16'>Tomatoro Done!\nStart Break?</span>"""
 
 BREAK_MSG = """
-<span font='16'>Break Over!\nStart Pomodoro?</span>"""
+<span font='16'>Break Over!\nStart Tomatoro?</span>"""
 
-POMO_RESTART_MSG = """
-<span font='16'>Start Pomodoro?</span>"""
+TOMO_RESTART_MSG = """
+<span font='16'>Start Tomatoro?</span>"""
 
 BREAK_RESTART_MSG = """
 <span font='16'>Start Break?</span>"""
@@ -53,21 +54,19 @@ class Tomaty(Gtk.Window):
         self.set_size_request(250, 135)
         self.tomatosCompleted = 0
 
-        self.notebook = Gtk.Notebook()
-        self.notebook.set_size_request(250, 150)
+        self.notebook = TomatyNotebook()
 
         self.add(self.notebook)
 
         # TODO: properly convert to minutes when no longer dev'ing
-        self.pomo_time = timedelta(seconds=POMO_MINUTES)
+        self.tomo_time = timedelta(seconds=TOMO_MINUTES)
         self.break_time = timedelta(seconds=BREAK_MINUTES)
-        self.rem_time = self.pomo_time
+        self.rem_time = self.tomo_time
         self.running = False
         self.break_period = False
 
         # setup main box for labels
-        self.vbox = Gtk.VBox(spacing=0)
-        self.vbox.set_homogeneous(False)
+        self.timerPage = TomatyPage()
 
         # make the label with timer
         self.timer_label = Gtk.Label()
@@ -78,7 +77,7 @@ class Tomaty(Gtk.Window):
         self.timer_label.set_margin_bottom(0)
 
         # add into hbox
-        self.vbox.pack_start(self.timer_label, True, True, 0)
+        self.timerPage.pack_start(self.timer_label, True, True, 0)
 
         self.button = Gtk.Button.new_with_label(label="start")
         self.button.connect("clicked", self.click_start)
@@ -87,10 +86,10 @@ class Tomaty(Gtk.Window):
         self.button.set_margin_bottom(5)
         self.button.set_halign(Gtk.Align.CENTER)
 
-        self.vbox.pack_start(self.button, False, False, 0)
+        self.timerPage.pack_start(self.button, False, False, 0)
 
         self.notebook.append_page(
-            child=self.vbox, tab_label=Gtk.Label(label='tomatoro'))
+            child=self.timerPage, tab_label=Gtk.Label(label='tomatoro'))
 
         self.tomatoroBox = Gtk.VBox(spacing=0)
         self.tomatoroLabel = Gtk.Label()
@@ -110,7 +109,7 @@ class Tomaty(Gtk.Window):
             self.running = True
             self.button.set_label("restart")
             if self.break_period is False:
-                self.rem_time = self.pomo_time
+                self.rem_time = self.tomo_time
                 GLib.timeout_add_seconds(1, self.countDown)
             else:
                 self.rem_time = self.break_time
@@ -119,8 +118,8 @@ class Tomaty(Gtk.Window):
             self.running = False
             self.button.set_label("start")
             if self.break_period is False:
-                self.timer_label.set_markup(str=POMO_RESTART_MSG)
-                self.rem_time = self.pomo_time
+                self.timer_label.set_markup(str=TOMO_RESTART_MSG)
+                self.rem_time = self.tomo_time
                 GLib.SOURCE_REMOVE
             else:
                 self.timer_label.set_markup(str=BREAK_RESTART_MSG)
@@ -138,7 +137,7 @@ class Tomaty(Gtk.Window):
                 self.tomatosCompleted += 1
                 self.tomatoroLabel.set_markup(
                     str=COUNT.format(self.tomatosCompleted))
-                self.timer_label.set_markup(str=POMO_MSG)
+                self.timer_label.set_markup(str=TOMO_MSG)
                 self.break_period = True
             else:
                 self.timer_label.set_markup(str=BREAK_MSG)
