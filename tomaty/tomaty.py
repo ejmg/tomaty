@@ -2,10 +2,11 @@
 tomaty.py
 ~~~~~~~~
 
-stub code for tomaty.py
+tomaty is a gtk based application that implements the Pomodoro technique to
+help users focus better on their work and encourage healthy lifestyle habits.
 
-
-TODO: everything
+This continues to be a work in progress. Expect many changes between 0.9.0dev
+and 2.0.0!
 
 :copyright: @ 2018
 :author: elias julian marko garcia
