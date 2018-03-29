@@ -55,10 +55,10 @@ class Tomaty(Gtk.Window):
         self.set_resizable(False)
         self.tomatosCompleted = 0
         self.running = False
-        self.break_period = False
-        self.toma_time = timedelta(seconds=TOMA_MINUTES)
-        self.break_time = timedelta(seconds=BREAK_MINUTES)
-        self.rem_time = self.toma_time
+        self.breakPeriod = False
+        self.tomaTime = timedelta(seconds=TOMA_MINUTES)
+        self.breakTime = timedelta(seconds=BREAK_MINUTES)
+        self.remTime = self.tomaTime
 
         # create notebook, add as main and sole child widget of window
         self.notebook = TomatyNotebook()
@@ -69,7 +69,7 @@ class Tomaty(Gtk.Window):
         # timer page setup
         self.timerPage = TomatyPage()
         self.timerLabel = TimerLabel(
-            label=TIMER_FRMT.format(str(self.rem_time)[2:]))
+            label=TIMER_FRMT.format(str(self.remTime)[2:]))
         self.timerPage.pack_start(self.timerLabel, True, True, 0)
 
         # start button
@@ -92,40 +92,40 @@ class Tomaty(Gtk.Window):
         if self.running is False:
             self.running = True
             self.tomatyButton.updateButton()
-            if self.break_period is False:
-                self.rem_time = self.toma_time
+            if self.breakPeriod is False:
+                self.remTime = self.tomaTime
                 GLib.timeout_add_seconds(1, self.countDown)
             else:
-                self.rem_time = self.break_time
+                self.remTime = self.breakTime
                 GLib.timeout_add_seconds(1, self.countDown)
         else:
             self.running = False
             self.tomatyButton.updateButton()
-            if self.break_period is False:
+            if self.breakPeriod is False:
                 self.timerLabel.set_markup(str=TOMA_RESTART_MSG)
-                self.rem_time = self.toma_time
+                self.remTime = self.tomaTime
                 GLib.SOURCE_REMOVE
             else:
                 self.timerLabel.set_markup(str=BREAK_RESTART_MSG)
-                self.rem_time = self.break_time
+                self.remTime = self.breakTime
                 GLib.SOURCE_REMOVE
 
     def countDown(self):
         # check to make sure countdown is not done if it is done, then we need
         # to reset a lot of things before going forward
-        if self.rem_time == timedelta(seconds=0):
+        if self.remTime == timedelta(seconds=0):
             alarm()
             self.running = False
             self.tomatyButton.updateButton()
-            if self.break_period is False:
+            if self.breakPeriod is False:
                 self.tomatosCompleted += 1
                 self.statsLabel.set_markup(
                     str=COUNT.format(self.tomatosCompleted))
                 self.timerLabel.set_markup(str=TOMA_MSG)
-                self.break_period = True
+                self.breakPeriod = True
             else:
                 self.timerLabel.set_markup(str=BREAK_MSG)
-                self.break_period = False
+                self.breakPeriod = False
 
             return GLib.SOURCE_REMOVE
 
@@ -138,9 +138,9 @@ class Tomaty(Gtk.Window):
 
     def tickTock(self):
         # TODO: change to minutes format when done dev'ing
-        self.rem_time = self.rem_time - timedelta(seconds=1)
+        self.remTime = self.remTime - timedelta(seconds=1)
 
-        return str(self.rem_time)[2:]
+        return str(self.remTime)[2:]
 
 
 def alarm():
