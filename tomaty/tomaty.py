@@ -12,17 +12,15 @@ and 2.0.0!
 :author: elias julian marko garcia
 :license: MIT, see LICENSE
 """
-
-import pathlib
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GObject, GLib, Gdk
 from datetime import timedelta
 from simpleaudio import WaveObject
 from os import path
 from tomaty.tomaty_notebook import TomatyNotebook, TomatyPage
 from tomaty.tomaty_label import TimerLabel, StatsLabel
 from tomaty.tomaty_button import TomatyButton
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk, GLib
 
 TOMA_MINUTES = 25
 BREAK_MINUTES = 5
@@ -71,8 +69,6 @@ class Tomaty(Gtk.Window):
         self.notebook = TomatyNotebook()
         self.add(self.notebook)
 
-        # TODO: properly convert to minutes when no longer dev'ing
-
         # timer page setup
         self.timerPage = TomatyPage()
         self.timerLabel = TimerLabel(
@@ -112,7 +108,7 @@ class Tomaty(Gtk.Window):
                 GLib.timeout_add_seconds(1, self.countDown)
             else:
                 self.remTime = self.breakTime
-                GLib.timeout_add_seconds(1, self.countDown)
+                GLib.timeout_add_seconds(interval=1, function=self.countDown)
         else:
             self.running = False
             self.tomatyButton.updateButton()
