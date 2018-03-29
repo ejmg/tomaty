@@ -24,7 +24,7 @@ from tomaty.tomaty_notebook import TomatyNotebook, TomatyPage
 from tomaty.tomaty_label import TimerLabel, StatsLabel
 from tomaty.tomaty_button import TomatyButton
 
-TOMA_MINUTES = 10
+TOMA_MINUTES = 25
 BREAK_MINUTES = 5
 
 TIMER_FRMT = """
@@ -62,8 +62,8 @@ class Tomaty(Gtk.Window):
         self.tomatosCompleted = 0
         self.running = False
         self.breakPeriod = False
-        self.tomaTime = timedelta(seconds=TOMA_MINUTES)
-        self.breakTime = timedelta(seconds=BREAK_MINUTES)
+        self.tomaTime = timedelta(minutes=TOMA_MINUTES)
+        self.breakTime = timedelta(minutes=BREAK_MINUTES)
         self.remTime = self.tomaTime
         self.tomatoroLength = self.tomaTime + self.breakTime
 
@@ -91,9 +91,9 @@ class Tomaty(Gtk.Window):
         self.countLabel = StatsLabel(
             label=COUNT.format(self.tomatosCompleted), smargin=10, emargin=10)
 
+        total = str(self.tomatoroLength * self.tomatosCompleted)
         self.totalLabel = StatsLabel(
-            label=TOTAL_TIME.format(
-                str(self.tomatoroLength * self.tomatosCompleted)),
+            label=TOTAL_TIME.format(total),
             emargin=25,
             justify=Gtk.Justification.LEFT)
 
@@ -136,9 +136,9 @@ class Tomaty(Gtk.Window):
                 self.tomatosCompleted += 1
                 self.countLabel.set_markup(
                     str=COUNT.format(self.tomatosCompleted))
-                self.countLabel.set_markup(
-                    str=TOTAL_TIME.format(
-                        str(self.tomatoroLength * self.tomatosCompleted)))
+
+                total = str(self.tomatoroLength * self.tomatosCompleted)
+                self.totalLabel.set_markup(str=TOTAL_TIME.format(total))
                 self.timerLabel.set_markup(str=TOMA_MSG)
                 self.breakPeriod = True
             else:
