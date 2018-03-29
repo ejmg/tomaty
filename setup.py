@@ -16,11 +16,18 @@ setup(
     description=(
         'tomaty is a pomodoro program featuring a GUI and tracking system'),
     url='https://github.com/ejmg/tomaty',
-    version='0.9.1dev',
+    version='0.9.35dev',
     packages=find_packages(),
     entry_points={
         "console_scripts": ['tomaty = tomaty.tomaty:run'],
     },
-    install_requires=[],
+    install_requires=[
+        'pygobject',
+        'simpleaudio',
+        'datetime',
+        'pathlib',
+    ],
+    # package_data=[('tomaty/', ['resources/audio/alarm.wav'])],
+    include_package_data=True,
     license='MIT',
     long_description=long_description)

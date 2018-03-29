@@ -46,6 +46,9 @@ BREAK_RESTART_MSG = """
 COUNT = """
 <span font='11'><tt>Tomatoros Completed: {}</tt></span>"""
 
+TOTAL_TIME = """
+<span font='11'><tt>Total Time: {}</tt></span>"""
+
 
 class Tomaty(Gtk.Window):
     def __init__(self):
@@ -62,6 +65,7 @@ class Tomaty(Gtk.Window):
         self.tomaTime = timedelta(seconds=TOMA_MINUTES)
         self.breakTime = timedelta(seconds=BREAK_MINUTES)
         self.remTime = self.tomaTime
+        self.tomatoroLength = self.tomaTime + self.breakTime
 
         # create notebook, add as main and sole child widget of window
         self.notebook = TomatyNotebook()
@@ -84,9 +88,17 @@ class Tomaty(Gtk.Window):
 
         # statistics page setup
         self.statsPage = TomatyPage()
-        self.statsLabel = StatsLabel(
+        self.countLabel = StatsLabel(
             label=COUNT.format(self.tomatosCompleted), smargin=10, emargin=10)
-        self.statsPage.pack_start(self.statsLabel, False, False, 0)
+
+        self.totalLabel = StatsLabel(
+            label=TOTAL_TIME.format(
+                str(self.tomatoroLength * self.tomatosCompleted)),
+            emargin=25,
+            justify=Gtk.Justification.LEFT)
+
+        self.statsPage.pack_start(self.countLabel, False, False, 0)
+        self.statsPage.pack_start(self.totalLabel, False, False, 0)
         self.notebook.append_page(
             child=self.statsPage, tab_label=Gtk.Label(label="stats"))
 
@@ -122,8 +134,11 @@ class Tomaty(Gtk.Window):
             self.tomatyButton.updateButton()
             if self.breakPeriod is False:
                 self.tomatosCompleted += 1
-                self.statsLabel.set_markup(
+                self.countLabel.set_markup(
                     str=COUNT.format(self.tomatosCompleted))
+                self.countLabel.set_markup(
+                    str=TOTAL_TIME.format(
+                        str(self.tomatoroLength * self.tomatosCompleted)))
                 self.timerLabel.set_markup(str=TOMA_MSG)
                 self.breakPeriod = True
             else:
@@ -149,9 +164,9 @@ class Tomaty(Gtk.Window):
 def alarm():
 
     # really need to find a cleaner, non-hack, way of getting to resources/
-    wavFile = (str(pathlib.Path(__file__).parents[1]) + path.sep +
-               "resources" + path.sep + "audio" + path.sep + "alarm.wav")
-    wav_obj = WaveObject.from_wave_file(wavFile)
+    resourcePath = path.join(path.split(__file__)[0], 'resources')
+    alarmPath = path.join(path.join(resourcePath, 'audio'), 'alarm.wav')
+    wav_obj = WaveObject.from_wave_file(alarmPath)
     wav_obj.play()
 
 
