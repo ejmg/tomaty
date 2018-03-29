@@ -13,6 +13,7 @@ and 2.0.0!
 :license: MIT, see LICENSE
 """
 
+import pathlib
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GObject, GLib, Gdk
@@ -22,6 +23,7 @@ from os import path
 from tomaty.tomaty_notebook import TomatyNotebook, TomatyPage
 from tomaty.tomaty_label import TimerLabel, StatsLabel
 from tomaty.tomaty_button import TomatyButton
+
 TOMA_MINUTES = 10
 BREAK_MINUTES = 5
 
@@ -145,8 +147,11 @@ class Tomaty(Gtk.Window):
 
 
 def alarm():
-    wavFile = path.abspath('./resources/audio/') + path.sep + 'alarm.wav'
-    wav_obj = WaveObject.from_wave_file(str(wavFile))
+
+    # really need to find a cleaner, non-hack, way of getting to resources/
+    wavFile = (str(pathlib.Path(__file__).parents[1]) + path.sep +
+               "resources" + path.sep + "audio" + path.sep + "alarm.wav")
+    wav_obj = WaveObject.from_wave_file(wavFile)
     wav_obj.play()
 
 
