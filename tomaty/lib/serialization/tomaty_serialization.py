@@ -26,6 +26,8 @@ class TomatySerializer:
         """
             Property for the total time a person has tomotoro-ed for a given day.
             Memoizes self._total_time to avoid having to open the json more than is necessary.
+        
+            :return self._total_time timedelta
         """
         if self._total_time is None:
             self._total_time = self.init_total_time()
@@ -51,12 +53,15 @@ class TomatySerializer:
 
             Initializes the .tomaty.json file if it doens't exist and sets time to 0:00:00.
             Otherwise, attempts to grab the current time spent tomotoro-ing today, otherwise sets time to 0:00:00
+
+            :return timedelta object
         """
+        data = None
         try:
             f = open(TOMATY_JSON_PATH, 'r+')
+            data = f.read()
         except IOError:
             f = open(TOMATY_JSON_PATH, 'w')
-        data = f.read()
 
         if data:
             tomaty_json = json.loads(data)
@@ -64,6 +69,7 @@ class TomatySerializer:
             if current_time:
                 return date_utilities.string_to_timedelta(tomaty_json.get(self.current_date, None))
             tomaty_json[self.current_date] = str(timedelta(0))
+            f.close()
             return timedelta(0)
         else:
             tomaty_json = {}
