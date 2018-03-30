@@ -12,12 +12,13 @@ and 2.0.0!
 :author: elias julian marko garcia
 :license: MIT, see LICENSE
 """
-from datetime import timedelta
+from datetime import timedelta, datetime
 from simpleaudio import WaveObject
 from os import path
 from tomaty.tomaty_notebook import TomatyNotebook, TomatyPage
 from tomaty.tomaty_label import TimerLabel, StatsLabel
 from tomaty.tomaty_button import TomatyButton
+from tomaty.lib.serialization import tomaty_serialization
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GLib
@@ -66,7 +67,7 @@ class Tomaty(Gtk.Window):
         self.tomatoroLength = self.tomaTime + self.breakTime
 
         # create notebook, add as main and sole child widget of window
-        self.notebook = TomatyNotebook()
+        self.notebook = TomatyNotebook(250, 150)
         self.add(self.notebook)
 
         # timer page setup
@@ -82,14 +83,18 @@ class Tomaty(Gtk.Window):
         self.notebook.append_page(
             child=self.timerPage, tab_label=Gtk.Label(label='tomatoro'))
 
+
         # statistics page setup
+        self.tomaty_serializer = tomaty_serialization.TomatySerializer()
+
         self.statsPage = TomatyPage()
         self.countLabel = StatsLabel(
             label=COUNT.format(self.tomatosCompleted), smargin=10, emargin=10)
 
-        total = str(self.tomatoroLength * self.tomatosCompleted)
+
+        self.total_time = self.tomaty_serializer.total_time
         self.totalLabel = StatsLabel(
-            label=TOTAL_TIME.format(total),
+            label=TOTAL_TIME.format(self.total_time),
             emargin=25,
             justify=Gtk.Justification.LEFT)
 
@@ -97,6 +102,20 @@ class Tomaty(Gtk.Window):
         self.statsPage.pack_start(self.totalLabel, False, False, 0)
         self.notebook.append_page(
             child=self.statsPage, tab_label=Gtk.Label(label="stats"))
+
+
+        self.connect('delete_event', self.destory)
+
+    def destory(self, widget=None, *data):
+        """
+            Save data before clsoing the application
+
+            :param widget: widget receiving the 'delete-event' signal
+            :param data: optional data received from connect
+        """
+        current_date = "{}".format(datetime.now().strftime("%Y_%m_%d"))
+        self.tomaty_serializer.save_tomotoro(self.total_time)
+        Gtk.main_quit()
 
     def click_start(self, tomatyButton):
         # begin counting!
@@ -133,8 +152,8 @@ class Tomaty(Gtk.Window):
                 self.countLabel.set_markup(
                     str=COUNT.format(self.tomatosCompleted))
 
-                total = str(self.tomatoroLength * self.tomatosCompleted)
-                self.totalLabel.set_markup(str=TOTAL_TIME.format(total))
+                self.total_time = self.total_time + self.tomatoroLength
+                self.totalLabel.set_markup(str=TOTAL_TIME.format(str(self.total_time)))
                 self.timerLabel.set_markup(str=TOMA_MSG)
                 self.breakPeriod = True
             else:
@@ -170,5 +189,5 @@ def run():
     t = Tomaty()
     t.connect('delete-event', Gtk.main_quit)
     t.show_all()
-    t.set_keep_above(True);
+    t.set_keep_above(True)
     Gtk.main()
