@@ -2,6 +2,8 @@
 tomaty.py
 ~~~~~~~~
 
+This module is the main module for tomaty and contains Tomaty, the main contain
+
 tomaty is a gtk based application that implements the Pomodoro technique to
 help users focus better on their work and encourage healthy lifestyle habits.
 
@@ -26,6 +28,7 @@ from gi.repository import Gtk, GLib
 TOMA_MINUTES = 25
 BREAK_MINUTES = 5
 
+# messages and or templates with Pango markup used by app.
 TIMER_FRMT = """
 <span font='34'>{}</span>
 """
@@ -50,9 +53,10 @@ TOTAL_TIME = """
 
 
 class Tomaty(Gtk.Window):
-    def __init__(self):
-        """init for main class Tomaty, runs tomaty app"""
+    """Tomaty """
 
+    def __init__(self):
+        # call to super, sets window title
         super(Tomaty, self).__init__(title="tomaty :: focus!")
 
         # attributes
@@ -76,21 +80,20 @@ class Tomaty(Gtk.Window):
             label=TIMER_FRMT.format(str(self.remTime)[2:]))
         self.timerPage.pack_start(self.timerLabel, True, True, 0)
 
-        # start button
+        # start button. connect to clickStart class method for click event.
         self.tomatyButton = TomatyButton(tmargin=5, bmargin=5)
-        self.tomatyButton.connect("clicked", self.click_start)
+        self.tomatyButton.connect("clicked", self.clickStart)
         self.timerPage.pack_start(self.tomatyButton, False, False, 0)
-        self.notebook.append_page(
-            child=self.timerPage, tab_label=Gtk.Label(label='tomatoro'))
 
 
         # statistics page setup
         self.tomaty_serializer = tomaty_serialization.TomatySerializer()
 
         self.statsPage = TomatyPage()
+
+        # counter label for cycles (1 toma + 1 break = 1 cycle)
         self.countLabel = StatsLabel(
             label=COUNT.format(self.tomatosCompleted), smargin=10, emargin=10)
-
 
         self.total_time = self.tomaty_serializer.total_time
         self.totalLabel = StatsLabel(
@@ -100,9 +103,12 @@ class Tomaty(Gtk.Window):
 
         self.statsPage.pack_start(self.countLabel, False, False, 0)
         self.statsPage.pack_start(self.totalLabel, False, False, 0)
+
+        # add pages to notebook. setup complete.
+        self.notebook.append_page(
+            child=self.timerPage, tab_label=Gtk.Label(label='tomatoro'))
         self.notebook.append_page(
             child=self.statsPage, tab_label=Gtk.Label(label="stats"))
-
 
         self.connect('delete_event', self.destory)
 
@@ -117,23 +123,46 @@ class Tomaty(Gtk.Window):
         self.tomaty_serializer.save_tomotoro(self.total_time)
         Gtk.main_quit()
 
-    def click_start(self, tomatyButton):
-        # begin counting!
+    def clickStart(self, tomatyButton):
+        """clickStart initiates the countdown timer for the current phase of a
+        tomatoro. when the timer is already running, it cancels the current
+        event and prompts for restarting.
+
+        :param tomatyButton: the button object used by the method. this
+        parameter is mandated by gtk specification when connected to a
+        gtk.Button
+
+        clickStart() uses a set of attribute booleans to check whether the app
+        is currently, `running` running and what phase it currently is in,
+        `breakPeriod`. From there, it determines whether to start the counter
+        or restart it, and correspondingly whether to add an object to Gtk's
+        event loop via GLib.timeout_add_seconds() or to remove it via
+        GLib.SOURCE_REMOVE
+        """
+
+        # check if running
         if self.running is False:
             self.running = True
             self.tomatyButton.updateButton()
+            # check if break, start timer with correct interval
             if self.breakPeriod is False:
                 self.remTime = self.tomaTime
-                GLib.timeout_add_seconds(1, self.countDown)
+                # always used named arguments, especially with
+                # GLib.timeout_add_seconds() due to its other optional params
+                # we set the time interval to 1 second and add countDown
+                # to the Gtk event loop.
+                GLib.timeout_add_seconds(interval=1, function=self.countDown)
             else:
                 self.remTime = self.breakTime
                 GLib.timeout_add_seconds(interval=1, function=self.countDown)
         else:
+            # cancel the timer if running, cleanup for restart.
             self.running = False
             self.tomatyButton.updateButton()
             if self.breakPeriod is False:
                 self.timerLabel.set_markup(str=TOMA_RESTART_MSG)
                 self.remTime = self.tomaTime
+                # we remove the countDown from the event loop when not counting
                 GLib.SOURCE_REMOVE
             else:
                 self.timerLabel.set_markup(str=BREAK_RESTART_MSG)
@@ -141,8 +170,12 @@ class Tomaty(Gtk.Window):
                 GLib.SOURCE_REMOVE
 
     def countDown(self):
-        # check to make sure countdown is not done if it is done, then we need
-        # to reset a lot of things before going forward
+        """countDown runs the decrement logic of the timer by checking for
+        whether `remTime` is 0.
+
+        countDown checks whether remTime is 0 on each call within the Gtk event
+        loop which occurs ~each second.
+        """
         if self.remTime == timedelta(seconds=0):
             alarm()
             self.running = False
@@ -170,13 +203,16 @@ class Tomaty(Gtk.Window):
         return GLib.SOURCE_CONTINUE
 
     def tickTock(self):
-        # TODO: change to minutes format when done dev'ing
+        """tickTock decrements the counter
+
+        """
         self.remTime = self.remTime - timedelta(seconds=1)
 
         return str(self.remTime)[2:]
 
 
 def alarm():
+    """calls alarm for the end of a cycle"""
 
     # really need to find a cleaner, non-hack, way of getting to resources/
     resourcePath = path.join(path.split(__file__)[0], 'resources')
