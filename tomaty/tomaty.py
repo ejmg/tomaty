@@ -70,7 +70,7 @@ class Tomaty(Gtk.Window):
         self.tomatoroLength = self.tomaTime + self.breakTime
 
         # create notebook, add as main and sole child widget of window
-        self.notebook = TomatyNotebook()
+        self.notebook = TomatyNotebook(250, 150)
         self.add(self.notebook)
 
         # timer page setup
