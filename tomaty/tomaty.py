@@ -53,7 +53,8 @@ TOTAL_TIME = """
 
 
 class Tomaty(Gtk.Window):
-    """Tomaty """
+    """Tomaty is the main window for the tomaty app, and holds all data and
+    objects used by the tomaty app."""
 
     def __init__(self):
         # call to super, sets window title
@@ -118,7 +119,6 @@ class Tomaty(Gtk.Window):
             :param widget: widget receiving the 'delete-event' signal
             :param data: optional data received from connect
         """
-        current_date = "{}".format(datetime.now().strftime("%Y_%m_%d"))
         self.tomaty_serializer.save_tomotoro(self.total_time)
         Gtk.main_quit()
 
@@ -140,33 +140,32 @@ class Tomaty(Gtk.Window):
         """
 
         # check if running
-        if self.running is False:
+        if self.running:
+            # cancel the timer if running, cleanup for restart.
+            self.running = False
+            self.tomatyButton.updateButton()
+            if self.breakPeriod:
+                self.timerLabel.set_markup(str=BREAK_RESTART_MSG)
+                self.remTime = self.breakTime
+            else:
+                self.timerLabel.set_markup(str=TOMA_RESTART_MSG)
+                self.remTime = self.tomaTime
+            GLib.SOURCE_REMOVE
+
+        else:
             self.running = True
             self.tomatyButton.updateButton()
             # check if break, start timer with correct interval
-            if self.breakPeriod is False:
+            if self.breakPeriod:
+                self.remTime = self.breakTime
+                GLib.timeout_add_seconds(interval=1, function=self.countDown)
+            else:
                 self.remTime = self.tomaTime
                 # always used named arguments, especially with
                 # GLib.timeout_add_seconds() due to its other optional params
                 # we set the time interval to 1 second and add countDown
                 # to the Gtk event loop.
                 GLib.timeout_add_seconds(interval=1, function=self.countDown)
-            else:
-                self.remTime = self.breakTime
-                GLib.timeout_add_seconds(interval=1, function=self.countDown)
-        else:
-            # cancel the timer if running, cleanup for restart.
-            self.running = False
-            self.tomatyButton.updateButton()
-            if self.breakPeriod is False:
-                self.timerLabel.set_markup(str=TOMA_RESTART_MSG)
-                self.remTime = self.tomaTime
-                # we remove the countDown from the event loop when not counting
-                GLib.SOURCE_REMOVE
-            else:
-                self.timerLabel.set_markup(str=BREAK_RESTART_MSG)
-                self.remTime = self.breakTime
-                GLib.SOURCE_REMOVE
 
     def countDown(self):
         """countDown runs the decrement logic of the timer by checking for
@@ -179,7 +178,10 @@ class Tomaty(Gtk.Window):
             alarm()
             self.running = False
             self.tomatyButton.updateButton()
-            if self.breakPeriod is False:
+            if self.breakPeriod:
+                self.timerLabel.set_markup(str=BREAK_MSG)
+                self.breakPeriod = False
+            else:
                 self.tomatosCompleted += 1
                 self.countLabel.set_markup(
                     str=COUNT.format(self.tomatosCompleted))
@@ -189,13 +191,10 @@ class Tomaty(Gtk.Window):
                     str=TOTAL_TIME.format(str(self.total_time)))
                 self.timerLabel.set_markup(str=TOMA_MSG)
                 self.breakPeriod = True
-            else:
-                self.timerLabel.set_markup(str=BREAK_MSG)
-                self.breakPeriod = False
 
             return GLib.SOURCE_REMOVE
 
-        if self.running is False:
+        if not self.running:
             return GLib.SOURCE_REMOVE
 
         self.timerLabel.set_markup(str=TIMER_FRMT.format(self.tickTock()))
