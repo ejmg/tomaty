@@ -158,14 +158,18 @@ class Tomaty(Gtk.Window):
             # check if break, start timer with correct interval
             if self.breakPeriod:
                 self.remTime = self.breakTime
-                GLib.timeout_add_seconds(interval=1, function=self.countDown)
+                self.timerLabel.set_markup(
+                    str=TIMER_FRMT.format(str(self.remTime)[2:]))
             else:
                 self.remTime = self.tomaTime
-                # always used named arguments, especially with
-                # GLib.timeout_add_seconds() due to its other optional params
-                # we set the time interval to 1 second and add countDown
-                # to the Gtk event loop.
-                GLib.timeout_add_seconds(interval=1, function=self.countDown)
+                self.timerLabel.set_markup(
+                    str=TIMER_FRMT.format(str(self.remTime)[2:]))
+
+            # always used named arguments, especially with
+            # GLib.timeout_add_selfeconds() due to its other optional params
+            # we set the time interval to 1 second and add countDown
+            # to the Gtk event loop.
+            GLib.timeout_add_seconds(interval=1, function=self.countDown)
 
     def countDown(self):
         """countDown runs the decrement logic of the timer by checking for
