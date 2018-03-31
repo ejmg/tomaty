@@ -85,7 +85,6 @@ class Tomaty(Gtk.Window):
         self.tomatyButton.connect("clicked", self.clickStart)
         self.timerPage.pack_start(self.tomatyButton, False, False, 0)
 
-
         # statistics page setup
         self.tomaty_serializer = tomaty_serialization.TomatySerializer()
 
@@ -186,7 +185,8 @@ class Tomaty(Gtk.Window):
                     str=COUNT.format(self.tomatosCompleted))
 
                 self.total_time = self.total_time + self.tomatoroLength
-                self.totalLabel.set_markup(str=TOTAL_TIME.format(str(self.total_time)))
+                self.totalLabel.set_markup(
+                    str=TOTAL_TIME.format(str(self.total_time)))
                 self.timerLabel.set_markup(str=TOMA_MSG)
                 self.breakPeriod = True
             else:
@@ -205,6 +205,8 @@ class Tomaty(Gtk.Window):
     def tickTock(self):
         """tickTock decrements the counter
 
+        :return: a string of the timedelta for remaining time
+
         """
         self.remTime = self.remTime - timedelta(seconds=1)
 
@@ -214,7 +216,6 @@ class Tomaty(Gtk.Window):
 def alarm():
     """calls alarm for the end of a cycle"""
 
-    # really need to find a cleaner, non-hack, way of getting to resources/
     resourcePath = path.join(path.split(__file__)[0], 'resources')
     alarmPath = path.join(path.join(resourcePath, 'audio'), 'alarm.wav')
     wav_obj = WaveObject.from_wave_file(alarmPath)

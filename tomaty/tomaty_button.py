@@ -30,6 +30,7 @@ class TomatyButton(Gtk.Button):
         self.set_halign(halign)
 
     def updateButton(self):
+        """updates the text of the button label"""
         if self.get_label() == "start":
             self.set_label("restart")
         else:

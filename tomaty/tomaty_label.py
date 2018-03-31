@@ -2,7 +2,10 @@
 tomaty_label.py
 ~~~~~~~~
 
-label class for the tomaty application
+label classes for the tomaty application.
+
+
+As of now, nothing differentiates the two.
 
 :copyright: @ 2018
 :author: elias julian marko garcia
@@ -36,10 +39,6 @@ class TimerLabel(Gtk.Label):
         self.set_margin_top(tmargin)
         self.set_margin_bottom(bmargin)
         self.set_justify(justify)
-
-    def interrupt(self, ):
-        # if self.get_label() == TOMA_RESTART_MSG:
-        pass
 
 
 class StatsLabel(Gtk.Label):
