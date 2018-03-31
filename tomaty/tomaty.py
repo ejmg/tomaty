@@ -223,7 +223,6 @@ def alarm():
 
 def run():
     t = Tomaty()
-    t.connect('delete-event', Gtk.main_quit)
     t.show_all()
     t.set_keep_above(True)
     Gtk.main()
