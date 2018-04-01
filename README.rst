@@ -41,11 +41,37 @@ i've created for enhancing tomaty. just let me know if you are working on one so
 installing
 ==========
 
+dependencies
+------------
+
+this is a python3 project. please use python3.
+
 tomaty is built with `Gtk <https://www.gtk.org/>`_ using python's pyGObject bindings, `gi <https://pygobject.readthedocs.io/en/latest/index.html>`_.
 
 the docs there have `instructions for essentially all major operating systems <https://pygobject.readthedocs.io/en/latest/getting_started.html>`_
 , please use them!
 
-if you have problems, please let me know in the issues and i can try to help. for mac users, checkout gabby's `comments <https://github.com/ejmg/tomaty/issues/43>`_ to see if they help you.
+pypi
+----
+1. (preferably) create a virtual environment
+2. using pip: `pip install tomaty`
+
+if you get errors about user privileges, particularly on linux or mac, try `pip install --user tomaty`. avoid using `sudo` whenever possible in terms of install `pip` packages.
+
+locally
+-------
+1. install the version you want from github
+2. enter the directory of your local clone
+3. using pip: `pip install -e .`
+
+problems
+--------
+
+if you have problems installing and or getting a development setup going, please let me know in the issues and i can try to help. for mac users, checkout gabby's `comments <https://github.com/ejmg/tomaty/issues/43>`_ to see if they help you.
 
 
+forks
+=====
+some friend(s) of mine have already started porting this project to other languages. you should check them out!
+
+- `boxcar-willie <https://github.com/bitemyapp/boxcar-willie>`_ - tomaty... but in rust-lang. by `@bitemyapp <https://github.com/bitemyapp>`_
