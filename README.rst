@@ -2,6 +2,10 @@ tomaty
 ===============
 *"you say tomato, I say stop wasting my time with lame python portmanteaus"*
 
+.. side by side images not allowed by github
+.. .. image:: https://raw.githubusercontent.com/ejmg/tomaty/master/img/macOS.png
+..   :width: 38 %
+..   :align: center
 .. image:: https://raw.githubusercontent.com/ejmg/tomaty/master/img/ubuntu-unity.png
 
 tomaty is a pomodoro app featuring basic stats tracking and notifications with many more features on the way.
@@ -21,7 +25,7 @@ goals
 
 while tomaty's current release is limited in features, i'm already working hard on another major release. 
 
-the following features should be available in the coming `2.0.0` release:
+the following features should be available in the coming ``2.0.0`` release:
   1. To-Do list
   2. basic settings page for user configuration
   3. setting: continuous mode
@@ -54,15 +58,19 @@ the docs there have `instructions for essentially all major operating systems <h
 pypi
 ----
 1. (preferably) create a virtual environment
-2. using pip: `pip install tomaty`
+2. using pip: ``pip install tomaty``
 
-if you get errors about user privileges, particularly on linux or mac, try `pip install --user tomaty`. avoid using `sudo` whenever possible in terms of install `pip` packages.
+if you get errors about user privileges, particularly on linux or mac, try ``pip install --user tomaty``. avoid using ``sudo`` whenever possible in terms of install ``pip`` packages.
+
+To update, simply ``pip install --upgrade tomaty``. Be sure to do this often, I am constantly adding enhancements and patching bugs 🐛.
 
 locally
 -------
 1. install the version you want from github
 2. enter the directory of your local clone
-3. using pip: `pip install -e .`
+3. using pip: ``pip install -e .``
+
+Assuming you are tracking master, a simple ``git pull origin master`` will do for updates.
 
 problems
 --------

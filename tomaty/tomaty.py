@@ -71,6 +71,9 @@ class Tomaty(Gtk.Window):
         self.remTime = self.tomaTime
         self.tomatoroLength = self.tomaTime + self.breakTime
 
+        # source id for tracking counter
+        self.eventSourceID = None
+
         # create notebook, add as main and sole child widget of window
         self.notebook = TomatyNotebook(250, 150)
         self.add(self.notebook)
@@ -177,7 +180,13 @@ class Tomaty(Gtk.Window):
             # GLib.timeout_add_selfeconds() due to its other optional params
             # we set the time interval to 1 second and add countDown
             # to the Gtk event loop.
-            GLib.timeout_add_seconds(interval=1, function=self.countDown)
+            if self.eventSourceID:
+                GLib.source_remove(self.eventSourceID)
+                self.eventSourceID = GLib.timeout_add_seconds(
+                    interval=1, function=self.countDown)
+            else:
+                self.eventSourceID = GLib.timeout_add_seconds(
+                    interval=1, function=self.countDown)
 
     def countDown(self):
         """countDown runs the decrement logic of the timer by checking for
@@ -193,7 +202,7 @@ class Tomaty(Gtk.Window):
             if self.breakPeriod:
                 self.timerLabel.set_markup(str=BREAK_MSG)
                 self.breakPeriod = False
-                self.total_time = self.total_time + self.tomaTime
+                self.total_time = self.total_time + self.breakPeriod
                 self.totalLabel.set_markup(
                     str=TOTAL_TIME.format(str(self.total_time)))
             else:
@@ -201,7 +210,7 @@ class Tomaty(Gtk.Window):
                 self.countLabel.set_markup(
                     str=COUNT.format(self.tomatosCompleted))
 
-                self.total_time = self.total_time + self.breakTime
+                self.total_time = self.total_time + self.tomaTime
                 self.totalLabel.set_markup(
                     str=TOTAL_TIME.format(str(self.total_time)))
 
