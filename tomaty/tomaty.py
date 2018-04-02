@@ -109,9 +109,17 @@ class Tomaty(Gtk.Window):
 
         # toma-do page setup
         self.todoPage = TomatyPage()
+        self.todoBox = Gtk.HBox()
         self.todoEntry = Gtk.Entry()
+        todoCheck = Gtk.CheckButton()
 
-        self.todoPage.add(self.todoEntry)
+        todoCheck.connect('toggled', self.toggled, 'button')
+
+        self.todoBox.pack_start(self.todoEntry, False, False, 0)
+        self.todoBox.pack_start(todoCheck, False, False, 0)
+
+        # self.todoPage.add(self.todoEntry)
+        self.todoPage.add(self.todoBox)
 
         # add pages to notebook. setup complete.
         self.notebook.append_page(
@@ -122,6 +130,13 @@ class Tomaty(Gtk.Window):
             child=self.todoPage, tab_label=Gtk.Label("toma-do"))
 
         self.connect('delete_event', self.destory)
+
+    def toggled(self, button, name):
+        if button.get_active():
+            state = "on"
+        else:
+            state = "off"
+        print("Button", name, "was turned", state)
 
     def destory(self, widget=None, *data):
         """
