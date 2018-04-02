@@ -194,7 +194,7 @@ class Tomaty(Gtk.Window):
             if self.breakPeriod:
                 self.timerLabel.set_markup(str=BREAK_MSG)
                 self.breakPeriod = False
-                self.total_time = self.total_time + self.breakPeriod
+                self.total_time = self.total_time + self.breakTime
                 self.totalLabel.set_markup(
                     str=TOTAL_TIME.format(str(self.total_time)))
             else:
