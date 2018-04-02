@@ -2,10 +2,10 @@ tomaty
 ===============
 *"you say tomato, I say stop wasting my time with lame python portmanteaus"*
 
-
-.. image:: https://raw.githubusercontent.com/ejmg/tomaty/master/img/macOS.png
-    :width: 38 %
-    :align: center
+# side by side images not allowed by github
+# .. image:: https://raw.githubusercontent.com/ejmg/tomaty/master/img/macOS.png
+#    :width: 38 %
+#    :align: center
 .. image:: https://raw.githubusercontent.com/ejmg/tomaty/master/img/ubuntu-unity.png
 
 tomaty is a pomodoro app featuring basic stats tracking and notifications with many more features on the way.
