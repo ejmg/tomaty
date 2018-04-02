@@ -16,7 +16,7 @@ setup(
     description=(
         'tomaty is a pomodoro program featuring a GUI and tracking system'),
     url='https://github.com/ejmg/tomaty',
-    version='1.0.2',
+    version='1.0.3',
     packages=find_packages(),
     entry_points={
         "console_scripts": ['tomaty = tomaty.tomaty:run'],
