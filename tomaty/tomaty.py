@@ -104,11 +104,19 @@ class Tomaty(Gtk.Window):
         self.statsPage.pack_start(self.countLabel, False, False, 0)
         self.statsPage.pack_start(self.totalLabel, False, False, 0)
 
+        # toma-do page setup
+        self.todoPage = TomatyPage()
+        self.todoEntry = Gtk.Entry()
+
+        self.todoPage.add(self.todoEntry)
+
         # add pages to notebook. setup complete.
         self.notebook.append_page(
             child=self.timerPage, tab_label=Gtk.Label(label='tomatoro'))
         self.notebook.append_page(
             child=self.statsPage, tab_label=Gtk.Label(label="stats"))
+        self.notebook.append_page(
+            child=self.todoPage, tab_label=Gtk.Label("toma-do"))
 
         self.connect('delete_event', self.destory)
 
