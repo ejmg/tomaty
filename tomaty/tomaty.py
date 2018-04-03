@@ -25,8 +25,8 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GLib
 
-TOMA_MINUTES = .1
-BREAK_MINUTES = .1
+TOMA_MINUTES = 25
+BREAK_MINUTES = 5
 
 # messages and or templates with Pango markup used by app.
 TIMER_FRMT = """
