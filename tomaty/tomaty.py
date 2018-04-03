@@ -176,7 +176,10 @@ class Tomaty(Gtk.Window):
             else:
                 self.timerLabel.set_markup(str=TOMA_RESTART_MSG)
                 self.remTime = self.tomaTime
-            GLib.SOURCE_REMOVE
+
+            temp = self.eventSourceID
+            self.eventSourceID = None
+            GLib.source_remove(temp)
 
         else:
             self.running = True
@@ -217,7 +220,7 @@ class Tomaty(Gtk.Window):
             if self.breakPeriod:
                 self.timerLabel.set_markup(str=BREAK_MSG)
                 self.breakPeriod = False
-                self.total_time = self.total_time + self.breakPeriod
+                self.total_time = self.total_time + self.breakTime
                 self.totalLabel.set_markup(
                     str=TOTAL_TIME.format(str(self.total_time)))
             else:
@@ -231,11 +234,14 @@ class Tomaty(Gtk.Window):
 
                 self.timerLabel.set_markup(str=TOMA_MSG)
                 self.breakPeriod = True
-
-            return GLib.SOURCE_REMOVE
+            temp = self.eventSourceID
+            self.eventSourceID = None
+            return GLib.source_remove(temp)
 
         if not self.running:
-            return GLib.SOURCE_REMOVE
+            temp = self.eventSourceID
+            self.eventSourceID = None
+            return GLib.source_remove(temp)
 
         self.timerLabel.set_markup(str=TIMER_FRMT.format(self.tickTock()))
         # signal to continue countdown within main loop
