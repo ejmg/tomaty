@@ -25,8 +25,8 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GLib
 
-TOMA_MINUTES = 25
-BREAK_MINUTES = 5
+TOMA_MINUTES = .1
+BREAK_MINUTES = .1
 
 # messages and or templates with Pango markup used by app.
 TIMER_FRMT = """
@@ -153,7 +153,10 @@ class Tomaty(Gtk.Window):
             else:
                 self.timerLabel.set_markup(str=TOMA_RESTART_MSG)
                 self.remTime = self.tomaTime
-            GLib.SOURCE_REMOVE
+
+            temp = self.eventSourceID
+            self.eventSourceID = None
+            GLib.source_remove(temp)
 
         else:
             self.running = True
@@ -208,11 +211,14 @@ class Tomaty(Gtk.Window):
 
                 self.timerLabel.set_markup(str=TOMA_MSG)
                 self.breakPeriod = True
-
-            return GLib.SOURCE_REMOVE
+            temp = self.eventSourceID
+            self.eventSourceID = None
+            return GLib.source_remove(temp)
 
         if not self.running:
-            return GLib.SOURCE_REMOVE
+            temp = self.eventSourceID
+            self.eventSourceID = None
+            return GLib.source_remove(temp)
 
         self.timerLabel.set_markup(str=TIMER_FRMT.format(self.tickTock()))
         # signal to continue countdown within main loop
