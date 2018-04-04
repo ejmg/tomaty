@@ -25,8 +25,11 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GLib
 
-TOMA_MINUTES = 25
-BREAK_MINUTES = 5
+print("TEST VALUES IN CODE, UNDO BEFORE MERGE")
+TOMA_MINUTES = .1
+BREAK_MINUTES = .1
+EXTENDED_BREAK_MINUTES = .2
+TOMA_CYCLE = 4
 
 # messages and or templates with Pango markup used by app.
 TIMER_FRMT = """
@@ -68,6 +71,7 @@ class Tomaty(Gtk.Window):
         self.breakPeriod = False
         self.tomaTime = timedelta(minutes=TOMA_MINUTES)
         self.breakTime = timedelta(minutes=BREAK_MINUTES)
+        self.extendedBreakTime = timedelta(minutes=EXTENDED_BREAK_MINUTES)
         self.remTime = self.tomaTime
         self.tomatoroLength = self.tomaTime + self.breakTime
 
@@ -149,7 +153,10 @@ class Tomaty(Gtk.Window):
             self.tomatyButton.updateButton()
             if self.breakPeriod:
                 self.timerLabel.set_markup(str=BREAK_RESTART_MSG)
-                self.remTime = self.breakTime
+                if not self.tomatosCompleted % TOMA_CYCLE:
+                    self.remTime = self.extendedBreakTime
+                else:
+                    self.remTime = self.breakTime
             else:
                 self.timerLabel.set_markup(str=TOMA_RESTART_MSG)
                 self.remTime = self.tomaTime
@@ -163,7 +170,10 @@ class Tomaty(Gtk.Window):
             self.tomatyButton.updateButton()
             # check if break, start timer with correct interval
             if self.breakPeriod:
-                self.remTime = self.breakTime
+                if not self.tomatosCompleted % TOMA_CYCLE:
+                    self.remTime = self.extendedBreakTime
+                else:
+                    self.remTime = self.breakTime
                 self.timerLabel.set_markup(
                     str=TIMER_FRMT.format(str(self.remTime)[2:]))
             else:
