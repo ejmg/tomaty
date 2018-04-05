@@ -27,6 +27,8 @@ from gi.repository import Gtk, GLib
 
 TOMA_MINUTES = 25
 BREAK_MINUTES = 5
+EXTENDED_BREAK_MINUTES = 30
+TOMA_SET = 4
 
 # messages and or templates with Pango markup used by app.
 TIMER_FRMT = """
@@ -35,6 +37,9 @@ TIMER_FRMT = """
 
 TOMA_MSG = """
 <span font='16'>Tomatoro Done!\nStart Break?</span>"""
+
+FINAL_TOMA_MSG = """
+<span font='16'>Toma Set Completed!\nStart Extended Break?</span>"""
 
 BREAK_MSG = """
 <span font='16'>Break Over!\nStart Tomatoro?</span>"""
@@ -68,6 +73,7 @@ class Tomaty(Gtk.Window):
         self.breakPeriod = False
         self.tomaTime = timedelta(minutes=TOMA_MINUTES)
         self.breakTime = timedelta(minutes=BREAK_MINUTES)
+        self.extendedBreakTime = timedelta(minutes=EXTENDED_BREAK_MINUTES)
         self.remTime = self.tomaTime
         self.tomatoroLength = self.tomaTime + self.breakTime
 
@@ -149,7 +155,11 @@ class Tomaty(Gtk.Window):
             self.tomatyButton.updateButton()
             if self.breakPeriod:
                 self.timerLabel.set_markup(str=BREAK_RESTART_MSG)
-                self.remTime = self.breakTime
+                # reset break time to appropriate interval
+                if not self.tomatosCompleted % TOMA_SET:
+                    self.remTime = self.extendedBreakTime
+                else:
+                    self.remTime = self.breakTime
             else:
                 self.timerLabel.set_markup(str=TOMA_RESTART_MSG)
                 self.remTime = self.tomaTime
@@ -163,7 +173,11 @@ class Tomaty(Gtk.Window):
             self.tomatyButton.updateButton()
             # check if break, start timer with correct interval
             if self.breakPeriod:
-                self.remTime = self.breakTime
+                # check if cycle finished, set time appropriately
+                if not self.tomatosCompleted % TOMA_SET:
+                    self.remTime = self.extendedBreakTime
+                else:
+                    self.remTime = self.breakTime
                 self.timerLabel.set_markup(
                     str=TIMER_FRMT.format(str(self.remTime)[2:]))
             else:
@@ -209,8 +223,13 @@ class Tomaty(Gtk.Window):
                 self.totalLabel.set_markup(
                     str=TOTAL_TIME.format(str(self.total_time)))
 
-                self.timerLabel.set_markup(str=TOMA_MSG)
+                # check if end of cycle, set message accordingly
+                if not self.tomatosCompleted % TOMA_SET:
+                    self.timerLabel.set_markup(str=FINAL_TOMA_MSG)
+                else:
+                    self.timerLabel.set_markup(str=TOMA_MSG)
                 self.breakPeriod = True
+
             temp = self.eventSourceID
             self.eventSourceID = None
             return GLib.source_remove(temp)
