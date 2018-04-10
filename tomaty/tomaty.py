@@ -150,7 +150,12 @@ class Tomaty(Gtk.Window):
 
     def keyPress(self, widget, event):
         print(event)
-        print("BOOYAH")
+        print(event.get_event_type())
+        print(event.keyval)
+        # currently, this is S-RET for me, for some reason :(
+        if event.keyval == Gdk.KEY_Return:
+            print("ENTER KEY PRESSED IN TEXT ENTRY BOX....")
+            print("future dot gif voice: hahaha...sensational")
 
     def toggled(self, button, name):
         if button.get_active():
