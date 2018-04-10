@@ -120,15 +120,16 @@ class Tomaty(Gtk.Window):
         self.todoEntry = Gtk.Entry()
         todoCheck = Gtk.CheckButton()
 
-        # need this to receive key press events
-        # todoCheck.set_events(Gdk.KEY_PRESS_MASK)
+        # attaching connect event to entrybox for ENTER key press
+        self.todoEntry.connect('activate', self.keyPress)
 
         self.wrapperEventBox.add(self.todoEntry)
-        self.wrapperEventBox.set_events(Gdk.EventMask.KEY_PRESS_MASK)
-        self.wrapperEventBox.connect('key-press-event', self.keyPress)
+
+        # this is all necessary if we want to use key-press-events on a widget
+        # self.wrapperEventBox.set_events(Gdk.EventMask.KEY_PRESS_MASK)
+        # self.wrapperEventBox.connect('key-press-event', self.altKeyPress)
 
         todoCheck.connect('toggled', self.toggled, 'button')
-        # self.todoEntry.key_press_event(todoCheck, '')
 
         self.todoBox.pack_start(self.wrapperEventBox, False, False, 0)
         self.todoBox.pack_start(todoCheck, False, False, 0)
@@ -148,7 +149,14 @@ class Tomaty(Gtk.Window):
 
         self.connect('delete_event', self.destory)
 
-    def keyPress(self, widget, event):
+    def keyPress(self, event):
+        print(event)
+        print('we did it')
+
+    def altKeyPress(self, widget, event):
+        """ preserving code for when needed possibly. this is for a press-key-event
+        callback"""
+
         print(event)
         print(event.get_event_type())
         print(event.keyval)
