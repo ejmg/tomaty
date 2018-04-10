@@ -23,7 +23,7 @@ from tomaty.tomaty_button import TomatyButton
 from tomaty.lib.serialization import tomaty_serialization
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GLib
+from gi.repository import Gtk, GLib, Gdk
 
 TOMA_MINUTES = 25
 BREAK_MINUTES = 5
@@ -116,15 +116,23 @@ class Tomaty(Gtk.Window):
         # toma-do page setup
         self.todoPage = TomatyPage()
         self.todoBox = Gtk.HBox()
+        self.wrapperEventBox = Gtk.EventBox()
         self.todoEntry = Gtk.Entry()
         todoCheck = Gtk.CheckButton()
 
-        todoCheck.connect('toggled', self.toggled, 'button')
+        # need this to receive key press events
+        # todoCheck.set_events(Gdk.KEY_PRESS_MASK)
 
-        self.todoBox.pack_start(self.todoEntry, False, False, 0)
+        self.wrapperEventBox.add(self.todoEntry)
+        self.wrapperEventBox.set_events(Gdk.EventMask.KEY_PRESS_MASK)
+        self.wrapperEventBox.connect('key-press-event', self.keyPress)
+
+        todoCheck.connect('toggled', self.toggled, 'button')
+        # self.todoEntry.key_press_event(todoCheck, '')
+
+        self.todoBox.pack_start(self.wrapperEventBox, False, False, 0)
         self.todoBox.pack_start(todoCheck, False, False, 0)
 
-        # self.todoPage.add(self.todoEntry)
         self.todoPage.add(self.todoBox)
 
         # add pages to notebook. setup complete.
@@ -135,7 +143,14 @@ class Tomaty(Gtk.Window):
         self.notebook.append_page(
             child=self.todoPage, tab_label=Gtk.Label("toma-do"))
 
+        # self.notebook.set_window(Gdk.Window())
+        # print(self.notebook.get_has_window())
+
         self.connect('delete_event', self.destory)
+
+    def keyPress(self, widget, event):
+        print(event)
+        print("BOOYAH")
 
     def toggled(self, button, name):
         if button.get_active():
@@ -273,7 +288,6 @@ class Tomaty(Gtk.Window):
 
         """
         self.remTime = self.remTime - timedelta(seconds=1)
-
         return str(self.remTime)[2:]
 
 
@@ -288,6 +302,7 @@ def alarm():
 
 def run():
     t = Tomaty()
+    t.set_events(Gdk.EventMask.KEY_PRESS_MASK)
     t.show_all()
     t.set_keep_above(True)
     Gtk.main()
