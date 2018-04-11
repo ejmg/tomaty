@@ -121,7 +121,7 @@ class Tomaty(Gtk.Window):
         todoCheck = Gtk.CheckButton()
 
         # attaching connect event to entrybox for ENTER key press
-        self.todoEntry.connect('activate', self.keyPress)
+        self.todoEntry.connect('activate', self.addEntry)
 
         self.wrapperEventBox.add(self.todoEntry)
 
@@ -152,6 +152,13 @@ class Tomaty(Gtk.Window):
     def keyPress(self, event):
         print(event)
         print('we did it')
+
+    def addEntry(self, entry):
+        newEntry = Gtk.Entry(editable=False)
+        newEntry.set_text(entry.get_text())
+        newWrapper = Gtk.EventBox()
+        newWrapper.add(newEntry)
+        self.todoPage.add(newEntry)
 
     def altKeyPress(self, widget, event):
         """ preserving code for when needed possibly. this is for a press-key-event
