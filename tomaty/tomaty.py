@@ -112,10 +112,11 @@ class Tomaty(Gtk.Window):
 
         self.statsPage.pack_start(self.countLabel, False, False, 0)
         self.statsPage.pack_start(self.totalLabel, False, False, 0)
-
         # toma-do page setup
         self.todoPage = TomatyPage()
-        self.todoBox = Gtk.HBox()
+        self.todoList = Gtk.ListBox()
+        self.todoRow = Gtk.ListBoxRow()
+        self.todoBox = Gtk.Box()
         self.wrapperEventBox = Gtk.EventBox()
         self.todoEntry = Gtk.Entry()
         todoCheck = Gtk.CheckButton()
@@ -123,6 +124,7 @@ class Tomaty(Gtk.Window):
         # attaching connect event to entrybox for ENTER key press
         self.todoEntry.connect('activate', self.addEntry)
 
+        # test to see if this is really necessary
         self.wrapperEventBox.add(self.todoEntry)
 
         # this is all necessary if we want to use key-press-events on a widget
@@ -134,7 +136,11 @@ class Tomaty(Gtk.Window):
         self.todoBox.pack_start(self.wrapperEventBox, False, False, 0)
         self.todoBox.pack_start(todoCheck, False, False, 0)
 
-        self.todoPage.add(self.todoBox)
+        self.todoRow.add(self.todoBox)
+
+        self.todoList.add(self.todoRow)
+
+        self.todoPage.add(self.todoList)
 
         # add pages to notebook. setup complete.
         self.notebook.append_page(
