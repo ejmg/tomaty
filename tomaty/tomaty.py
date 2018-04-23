@@ -160,15 +160,29 @@ class Tomaty(Gtk.Window):
         print('we did it')
 
     def addEntry(self, entry):
+        print("wutang!")
         newEntry = Gtk.Entry(editable=False)
         newEntry.set_text(entry.get_text())
         newWrapper = Gtk.EventBox()
         newWrapper.add(newEntry)
-        self.todoPage.add(newEntry)
+        newRow = Gtk.ListBoxRow()
+        newRow.add(newWrapper)
+        self.todoList.add(newRow)
+
+    def generateTodoView(self, todoItems):
+        # delete current todolist
+
+        # enumerate through list and create a new box for each
+        # add to list
+        pass
 
     def altKeyPress(self, widget, event):
         """ preserving code for when needed possibly. this is for a press-key-event
         callback"""
+
+        # TODO: Make S+RET the key press for sub-items in a todoList
+        # TODO: To make old entries modifiable, consider making the current
+        # selected TODO item the parent of a child if S+RET is used.
 
         print(event)
         print(event.get_event_type())
