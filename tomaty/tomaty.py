@@ -112,35 +112,18 @@ class Tomaty(Gtk.Window):
 
         self.statsPage.pack_start(self.countLabel, False, False, 0)
         self.statsPage.pack_start(self.totalLabel, False, False, 0)
+
         # toma-do page setup
+        self.todoItems = []
         self.todoPage = TomatyPage()
         self.todoList = Gtk.ListBox()
         self.todoRow = Gtk.ListBoxRow()
         self.todoBox = Gtk.Box()
         self.wrapperEventBox = Gtk.EventBox()
         self.todoEntry = Gtk.Entry()
-        todoCheck = Gtk.CheckButton()
+        self.todoCheck = Gtk.CheckButton()
 
-        # attaching connect event to entrybox for ENTER key press
-        self.todoEntry.connect('activate', self.addEntry)
-
-        # test to see if this is really necessary
-        self.wrapperEventBox.add(self.todoEntry)
-
-        # this is all necessary if we want to use key-press-events on a widget
-        # self.wrapperEventBox.set_events(Gdk.EventMask.KEY_PRESS_MASK)
-        # self.wrapperEventBox.connect('key-press-event', self.altKeyPress)
-
-        todoCheck.connect('toggled', self.toggled, 'button')
-
-        self.todoBox.pack_start(self.wrapperEventBox, False, False, 0)
-        self.todoBox.pack_start(todoCheck, False, False, 0)
-
-        self.todoRow.add(self.todoBox)
-
-        self.todoList.add(self.todoRow)
-
-        self.todoPage.add(self.todoList)
+        self.generateTodoView()
 
         # add pages to notebook. setup complete.
         self.notebook.append_page(
@@ -160,21 +143,44 @@ class Tomaty(Gtk.Window):
         print('we did it')
 
     def addEntry(self, entry):
-        print("wutang!")
-        newEntry = Gtk.Entry(editable=False)
-        newEntry.set_text(entry.get_text())
-        newWrapper = Gtk.EventBox()
-        newWrapper.add(newEntry)
-        newRow = Gtk.ListBoxRow()
-        newRow.add(newWrapper)
-        self.todoList.add(newRow)
+        # make this work
+        try:
+            print("{}".format(self.TodoEntry.get_text()))
+        except Exception as e:
+            print("did not work lol")
+        # newEntry = Gtk.Entry(editable=False)
+        # newEntry.set_text(entry.get_text())
+        # newWrapper = Gtk.EventBox()
+        # newWrapper.add(newEntry)
+        # newRow = Gtk.ListBoxRow()
+        # newRow.add(newWrapper)
+        # self.todoList.add(newRow)
 
-    def generateTodoView(self, todoItems):
+    def generateTodoView(self):
         # delete current todolist
 
         # enumerate through list and create a new box for each
         # add to list
-        pass
+        # attaching connect event to entrybox for ENTER key press
+        self.todoEntry.connect('activate', self.addEntry)
+
+        # test to see if this is really necessary
+        self.wrapperEventBox.add(self.todoEntry)
+
+        # this is all necessary if we want to use key-press-events on a widget
+        # self.wrapperEventBox.set_events(Gdk.EventMask.KEY_PRESS_MASK)
+        # self.wrapperEventBox.connect('key-press-event', self.altKeyPress)
+
+        self.todoCheck.connect('toggled', self.toggled, 'button')
+
+        self.todoBox.pack_start(self.wrapperEventBox, False, False, 0)
+        self.todoBox.pack_start(self.todoCheck, False, False, 0)
+
+        self.todoRow.add(self.todoBox)
+
+        self.todoList.add(self.todoRow)
+
+        self.todoPage.add(self.todoList)
 
     def altKeyPress(self, widget, event):
         """ preserving code for when needed possibly. this is for a press-key-event
