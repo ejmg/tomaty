@@ -163,6 +163,8 @@ class Tomaty(Gtk.Window):
         # enumerate through list and create a new box for each
         # add to list
         # attaching connect event to entrybox for ENTER key press
+        self.todoEntry = Gtk.Entry()
+        print('wutang, out!')
         self.todoEntry.connect('activate', self.addEntry)
 
         # test to see if this is really necessary
@@ -188,8 +190,12 @@ class Tomaty(Gtk.Window):
         container_children = container.get_children()
         print(type(container))
         print("{}".format(container_children))
+        container_children_children = container_children[0].get_children()
+
+        print("{}".format(container_children_children))
         # works!
         container_children[0].destroy()
+        self.generateTodoView()
 
     def altKeyPress(self, widget, event):
         """ preserving code for when needed possibly. this is for a press-key-event
