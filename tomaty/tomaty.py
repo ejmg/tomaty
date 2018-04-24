@@ -148,6 +148,7 @@ class Tomaty(Gtk.Window):
             print("{}".format(self.TodoEntry.get_text()))
         except Exception as e:
             print("did not work lol")
+            self.updateTodoView()
         # newEntry = Gtk.Entry(editable=False)
         # newEntry.set_text(entry.get_text())
         # newWrapper = Gtk.EventBox()
@@ -181,6 +182,14 @@ class Tomaty(Gtk.Window):
         self.todoList.add(self.todoRow)
 
         self.todoPage.add(self.todoList)
+
+    def updateTodoView(self):
+        container = self.notebook.get_nth_page(2)
+        container_children = container.get_children()
+        print(type(container))
+        print("{}".format(container_children))
+        # works!
+        container_children[0].destroy()
 
     def altKeyPress(self, widget, event):
         """ preserving code for when needed possibly. this is for a press-key-event
